@@ -1,0 +1,7 @@
+zsh-users/zsh-completions
+zsh-users/zsh-syntax-highlighting
+
+lukechilds/zsh-better-npm-completion
+rcruzper/zsh-git-plugin
+
+zsh-users/zsh-history-substring-search
