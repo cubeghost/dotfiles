@@ -2,18 +2,19 @@
 
 export TERM=xterm-256color
 export PATH="$PATH:/usr/local/sbin"
+export CLICOLOR=1
+export DOTFILES="$HOME/dotfiles"
 
 # TODO SPLIT THESE OUT
 
 # init antibody
 source <(antibody init)
 
-antibody bundle < $HOME/bundles.txt
+antibody bundle < $DOTFILES/bundles.txt
 
 # setup
 export ZSH_CUSTOM=~/.zsh
 setopt PROMPT_SUBST
-autoload -U compinit; compinit
 
 # borrowed from https://github.com/robbyrussell/oh-my-zsh/blob/master/lib/git.zsh
 # to make spaceship work
@@ -54,6 +55,7 @@ eval $(thefuck --alias)
 # aliases
 alias canary="open -a Google\ Chrome\ Canary --args --disable-web-security --user-data-dir"
 alias reload="exec zsh"
+alias ls="gls -FG --color=always"
 
 # history
 SAVEHIST=1000
@@ -68,6 +70,13 @@ setopt hist_ignore_space
 setopt histignorealldups
 
 
+# add color
+autoload colors
+colors
+zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
+eval `gdircolors $DOTFILES/monokai.dircolors`
+
+
 # completion
 autoload -Uz compinit
 typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
@@ -78,17 +87,12 @@ else
 fi
 # matches case insensitive for lowercase
 zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-# add color
-autoload colors
-colors
-zstyle ':completion:*' list-colors ${(s.:.)LS_COLORS}
 
 
 # auto cd
 setopt auto_cd
 zstyle ':completion:*:cd:*' tag-order local-directories path-directories
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
-
 
 
 
