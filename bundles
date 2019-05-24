@@ -1,7 +1,8 @@
+denysdovhan/spaceship-prompt
+
 zsh-users/zsh-completions
 zsh-users/zsh-syntax-highlighting
 
-lukechilds/zsh-better-npm-completion
 rcruzper/zsh-git-plugin
 jreese/zsh-titles
 

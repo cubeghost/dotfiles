@@ -10,7 +10,7 @@ export DOTFILES="$HOME/dotfiles"
 # init antibody
 source <(antibody init)
 
-antibody bundle < $DOTFILES/bundles.txt
+antibody bundle < $DOTFILES/bundles
 
 # setup
 export ZSH_CUSTOM=~/.zsh
@@ -29,10 +29,6 @@ function git_current_branch() {
   echo ${ref#refs/heads/}
 }
 
-# spaceship
-autoload -U promptinit; promptinit
-prompt spaceship
-
 # spaceship config
 SPACESHIP_PROMPT_SYMBOL=➔
 SPACESHIP_PROMPT_ORDER=(
@@ -49,13 +45,8 @@ SPACESHIP_PROMPT_ORDER=(
   char          # Prompt character
 )
 
-# thefuck
-eval $(thefuck --alias)
-
 # aliases
-alias canary="open -a Google\ Chrome\ Canary --args --disable-web-security --user-data-dir"
 alias reload="exec zsh"
-alias ls="gls -FG --color=always"
 
 # history
 SAVEHIST=1000
@@ -74,10 +65,10 @@ setopt histignorealldups
 autoload colors
 colors
 zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
-eval `gdircolors $DOTFILES/monokai.dircolors`
 
 
 # completion
+# is this right?????
 autoload -Uz compinit
 typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
 if [ $(date +'%j') != $updated_at ]; then
@@ -95,7 +86,6 @@ zstyle ':completion:*:cd:*' tag-order local-directories path-directories
 zstyle ':completion:*:cd:*' ignore-parents parent pwd
 
 
-
 # things that run when we open a shell
-neofetch
+neofetch --config "${DOTFILES}/neofetch/config"
 fortune

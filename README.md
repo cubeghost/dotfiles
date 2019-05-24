@@ -1,4 +1,4 @@
 # dotfiles
 
-- antibody
-- https://github.com/denysdovhan/spaceship-zsh-theme/tree/3.0
+- run formation first https://github.com/cubeghost/formation
+- echo "source ~/dotfiles/.zshrc" > ~/.zshrc
