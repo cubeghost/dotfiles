@@ -1,91 +1,65 @@
 #!/bin/zsh
 
-export TERM=xterm-256color
-export PATH="$PATH:/usr/local/sbin"
 export CLICOLOR=1
 export DOTFILES="$HOME/dotfiles"
+export HISTFILE="$HOME/.zsh_history"
+export SAVEHIST=10000
 
-# TODO SPLIT THESE OUT
-
-# init antibody
-source <(antibody init)
-
-antibody bundle < $DOTFILES/bundles
-
-# setup
-export ZSH_CUSTOM=~/.zsh
-setopt PROMPT_SUBST
-
-# borrowed from https://github.com/robbyrussell/oh-my-zsh/blob/master/lib/git.zsh
-# to make spaceship work
-function git_current_branch() {
-  local ref
-  ref=$(command git symbolic-ref --quiet HEAD 2> /dev/null)
-  local ret=$?
-  if [[ $ret != 0 ]]; then
-    [[ $ret == 128 ]] && return  # no git repo.
-    ref=$(command git rev-parse --short HEAD 2> /dev/null) || return
-  fi
-  echo ${ref#refs/heads/}
-}
-
-# spaceship config
-SPACESHIP_PROMPT_SYMBOL=➔
-SPACESHIP_PROMPT_ORDER=(
-  time          # Time stampts section
-  user          # Username section
-  host          # Hostname section
-  dir           # Current directory section
-  git           # Git section (git_branch + git_status)
-  venv          # virtualenv section
-  pyenv         # Pyenv section
-  exec_time     # Execution time
-  line_sep      # Line break
-  vi_mode       # Vi-mode indicator
-  char          # Prompt character
-)
-
-# aliases
-alias reload="exec zsh"
-
-# history
-SAVEHIST=1000
-HISTFILE="$HOME/.zhistory"
-
-bindkey '^[[A' history-substring-search-up
-bindkey '^[[B' history-substring-search-down
-
-setopt inc_append_history
-setopt hist_ignore_dups
-setopt hist_ignore_space
-setopt histignorealldups
-
-
-# add color
-autoload colors
-colors
-zstyle ':completion:*' list-colors "${(@s.:.)LS_COLORS}"
-
-
-# completion
-# is this right?????
-autoload -Uz compinit
-typeset -i updated_at=$(date +'%j' -r ~/.zcompdump 2>/dev/null || stat -f '%Sm' -t '%j' ~/.zcompdump 2>/dev/null)
-if [ $(date +'%j') != $updated_at ]; then
-  compinit -i
-else
-  compinit -C -i
-fi
-# matches case insensitive for lowercase
-zstyle ':completion:*' matcher-list 'm:{a-z}={A-Z}'
-
-
-# auto cd
-setopt auto_cd
-zstyle ':completion:*:cd:*' tag-order local-directories path-directories
-zstyle ':completion:*:cd:*' ignore-parents parent pwd
-
-
-# things that run when we open a shell
+# New shell stuff.
 neofetch --config "${DOTFILES}/neofetch/config"
 fortune
+
+# Based on https://github.com/romkatv/zsh-bench/blob/master/configs/diy%2B%2Bfsyh/skel/.zshrc
+
+function zcompile-many() {
+  local f
+  for f; do zcompile -R -- "$f".zwc "$f"; done
+}
+
+# Clone and compile to wordcode missing plugins.
+if [[ ! -e ~/fast-syntax-highlighting ]]; then
+  git clone --depth=1 https://github.com/zdharma-continuum/fast-syntax-highlighting.git ~/fast-syntax-highlighting
+  mv -- ~/fast-syntax-highlighting/{'→chroma','tmp'}
+  zcompile-many ~/fast-syntax-highlighting/{fast*,.fast*,**/*.ch,**/*.zsh}
+  mv -- ~/fast-syntax-highlighting/{'tmp','→chroma'}
+fi
+if [[ ! -e ~/zsh-autosuggestions ]]; then
+  git clone --depth=1 https://github.com/zsh-users/zsh-autosuggestions.git ~/zsh-autosuggestions
+  zcompile-many ~/zsh-autosuggestions/{zsh-autosuggestions.zsh,src/**/*.zsh}
+fi
+if [[ ! -e ~/zsh-history-substring-search ]]; then
+  git clone --depth=1 https://github.com/zsh-users/zsh-history-substring-search.git ~/zsh-history-substring-search
+  zcompile-many ~/zsh-history-substring-search/*.zsh
+fi
+if [[ ! -e ~/zsh-titles ]]; then
+  git clone --depth=1 https://github.com/jreese/zsh-titles.git ~/zsh-titles
+  zcompile-many ~/zsh-titles/*.zsh
+fi
+if [[ ! -e ~/powerlevel10k ]]; then
+  git clone --depth=1 https://github.com/romkatv/powerlevel10k.git ~/powerlevel10k
+  make -C ~/powerlevel10k pkg
+fi
+
+# Activate Powerlevel10k Instant Prompt.
+if [[ -r "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh" ]]; then
+  source "${XDG_CACHE_HOME:-$HOME/.cache}/p10k-instant-prompt-${(%):-%n}.zsh"
+fi
+
+# Enable the "new" completion system (compsys).
+autoload -Uz compinit && compinit
+[[ ~/.zcompdump.zwc -nt ~/.zcompdump ]] || zcompile-many ~/.zcompdump
+unfunction zcompile-many
+
+ZSH_AUTOSUGGEST_MANUAL_REBIND=1
+
+# Load plugins.
+source ~/fast-syntax-highlighting/fast-syntax-highlighting.plugin.zsh
+source ~/zsh-autosuggestions/zsh-autosuggestions.zsh
+source ~/zsh-history-substring-search/zsh-history-substring-search.plugin.zsh
+source ~/zsh-titles/titles.plugin.zsh
+source ~/powerlevel10k/powerlevel10k.zsh-theme
+source $DOTFILES/.p10k.zsh
+
+# Customize p10k prompt
+POWERLEVEL9K_PROMPT_CHAR_OK_VIINS_CONTENT_EXPANSION="➜"
+POWERLEVEL9K_PROMPT_CHAR_ERROR_VIINS_CONTENT_EXPANSION="➜"

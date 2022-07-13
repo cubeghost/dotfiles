@@ -1,7 +1,7 @@
 #!/bin/zsh
 
 DIR="$(cd -P -- "$(dirname -- "$0")" && pwd -P)"
-FORTUNES_DIR="/usr/local/share/games/fortunes"
+FORTUNES_DIR="$(brew --prefix)/Cellar/fortune/9708/share/games/fortunes"
 
 cd $DIR;
 
