@@ -5,6 +5,10 @@ export DOTFILES="$HOME/dotfiles"
 export HISTFILE="$HOME/.zsh_history"
 export SAVEHIST=10000
 
+# alt-left and alt-right support
+bindkey "\e\e[D" backward-word
+bindkey "\e\e[C" forward-word
+
 # New shell stuff.
 neofetch --config "${DOTFILES}/neofetch/config"
 fortune
