@@ -10,7 +10,7 @@ bindkey "\e\e[D" backward-word
 bindkey "\e\e[C" forward-word
 
 # New shell stuff.
-neofetch --config "${DOTFILES}/neofetch/config"
+fastfetch --config "${DOTFILES}/fastfetch/config.jsonc"
 fortune
 
 # Based on https://github.com/romkatv/zsh-bench/blob/master/configs/diy%2B%2Bfsyh/skel/.zshrc

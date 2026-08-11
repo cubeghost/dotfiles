@@ -1,0 +1,30 @@
+{
+  "$schema": "https://github.com/fastfetch-cli/fastfetch/raw/master/doc/json_schema.json",
+  "logo": {
+    "source": "${DOTFILES}/fastfetch/hammer_and_sickle.txt",
+    "color": {
+      "1": "31"
+    }
+  },
+  "modules": [
+    "title",
+    "separator",
+    "os",
+    "host",
+    "kernel",
+    "uptime",
+    "packages",
+    "shell",
+    "icons",
+    "terminal",
+    "terminalfont",
+    "cpu",
+    "gpu",
+    "memory",
+    "swap",
+    "localip",
+    "break",
+    "colors",
+    "break"
+  ]
+}
